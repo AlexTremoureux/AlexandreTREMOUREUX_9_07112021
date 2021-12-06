@@ -1,3 +1,5 @@
+import firebase from "./firebase.js"
+
 export default {
   get: () => {
     return Promise.resolve({
@@ -62,5 +64,16 @@ export default {
         "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=4df6ed2c-12c8-42a2-b013-346c1346f732"
       }]
     })
-  }
+  },
+
+  // Ajout pour test d'intégration NewBills.js
+  post: async (newBill) => {
+    const bills = await firebase.get();
+    return Promise.resolve({
+      data: [
+        ...bills.data,
+        newBill
+      ],
+    });
+  },
 }

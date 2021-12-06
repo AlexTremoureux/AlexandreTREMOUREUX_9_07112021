@@ -16,7 +16,8 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
-    document.querySelector(".error-imageFormat").style.display = "none"
+    const errorMessage = document.querySelector(".error-imageFormat");
+    errorMessage.style.display = "none"
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
@@ -25,6 +26,7 @@ export default class NewBill {
     const extensionIsValid = validExtensions.includes(fileExtension)
 
     if (extensionIsValid) {
+      
       this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
@@ -35,8 +37,8 @@ export default class NewBill {
         this.fileName = fileName
       })
     } else {
-      document.querySelector(".error-imageFormat").style.display = "block"
-      document.querySelector(`input[data-testid="file"]`).value = ""
+      errorMessage.style.display = "block"
+      this.document.querySelector(`input[data-testid="file"]`).value = '';
     }
     
   }
