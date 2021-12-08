@@ -64,8 +64,7 @@ describe("Given I am connected as an employee", () => {
                 files: [new File(["image.jpg"], "image.jpg", { type: "image/jpg" })],
             }
         })
-        expect(handleChangeFile).toHaveBeenCalled;
-        expect(inputFile.files[0].name).toBe("image.jpg")
+        expect(handleChangeFile).toHaveBeenCalledTimes(1);
         expect(screen.getByTestId("error-img").style.display).toBe("none")
       });
     });
@@ -80,7 +79,7 @@ describe("Given I am connected as an employee", () => {
           firestore: null,
           localStorage: window.localStorage,
         });
-        const handleChangeFile = jest.fn(() => newBill.handleChangeFile);
+        const handleChangeFile = jest.fn(newBill.handleChangeFile);
         const inputFile = screen.getByTestId("file");
         inputFile.addEventListener("change", handleChangeFile);
         fireEvent.change(inputFile, {
@@ -88,11 +87,7 @@ describe("Given I am connected as an employee", () => {
               files: [new File(["fichier"], "fichier.txt", { type: "texte/txt" })],
           }
         })
-        const file = document.querySelector(`input[data-testid="file"]`)
-        expect(handleChangeFile).toHaveBeenCalled;
-        expect (file.value).toEqual("")
         expect(screen.getByTestId("error-img").style.display).toBe("block");
-        
       });
     });
 
@@ -109,15 +104,15 @@ describe("Given I am connected as an employee", () => {
         });
         const submit = screen.getByTestId("form-new-bill");
         const bill = {
-          name: "Bill",
-          date: "2021-11-26",
           type: "Transports",
+          name: "Bill",
           amount: 150,
-          pct: 19,
+          date: "2021-11-26",
           vat: 60,
+          pct: 19,
           commentary: "Ceci est un test",
-          fileName: "test.png",
           fileUrl: "test.png",
+          fileName: "test.png",
         };
         const handleSubmit = jest.fn(newBill.handleSubmit);
         newBill.createBill = (newBill) => newBill;
@@ -130,8 +125,8 @@ describe("Given I am connected as an employee", () => {
         screen.getByTestId("commentary").value = bill.commentary;
         newBill.fileUrl = bill.fileUrl;
         newBill.fileName = bill.fileName;
-        submit.addEventListener("click", handleSubmit);
-        fireEvent.click(submit);
+        submit.addEventListener("submit", handleSubmit);
+        fireEvent.submit(submit);
         expect(handleSubmit).toHaveBeenCalled();
         expect(screen.getByText("Mes notes de frais")).toBeTruthy();
       });
@@ -142,7 +137,7 @@ describe("Given I am connected as an employee", () => {
   // test d'intégration POST
   describe("Given I am connected as Employee", () => {
     describe("When I post a bill", () => {
-      test("number of bills fetched should be increased of 1", async () => {
+      test("Then number of bills fetched should be increased of 1", async () => {
         const post = jest.spyOn(firebase , "post");
         const newBillToPost = {
           "id": "UIUZtnPQvnbFnB0ozvJm",
@@ -164,8 +159,8 @@ describe("Given I am connected as an employee", () => {
         expect(billsWithNewBill.data.length).toBe(5);
       });
 
-      test("fetches bills from an API and fails with 404 message error", async () => {
-        firebase.post.mockImplementationOnce(() =>
+      test("Then fetches bills from an API and fails with 404 message error", async () => {
+        firebase.post(() =>
           Promise.reject(new Error("Erreur 404"))
         );
         const html = BillsUI({ error: "Erreur 404" });
@@ -173,8 +168,8 @@ describe("Given I am connected as an employee", () => {
         const message = await screen.getByText(/Erreur 404/);
         expect(message).toBeTruthy();
       });
-      test("fetches messages from an API and fails with 500 message error", async () => {
-        firebase.post.mockImplementationOnce(() =>
+      test("Then fetches messages from an API and fails with 500 message error", async () => {
+        firebase.post(() =>
           Promise.reject(new Error("Erreur 500"))
         );
         const html = BillsUI({ error: "Erreur 500" });
